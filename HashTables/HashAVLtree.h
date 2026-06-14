@@ -41,10 +41,10 @@ public:
     void print() const;
 };
 
-// Właściwa klasa Tablicy Mieszającej opartej o drzewa AVL
+// Klasa główna reprezentująca tablicę haszującą z użyciem drzew AVL jako kubełków
 class HashTableAVL {
 private:
-    AVLTree* buckets; // Tablica obiektów drzew AVL (kubełków)
+    AVLTree* buckets; 
     int capacity;
     int size;
 
@@ -54,8 +54,8 @@ public:
     explicit HashTableAVL(int cap);
     ~HashTableAVL();
 
-    void insert(int key, int value); // Wywołuje insert() na odpowiednim drzewie [cite: 18]
-    bool remove(int key);            // Wywołuje remove() na odpowiednim drzewie 
+    void insert(int key, int value); 
+    bool remove(int key);            
     int* search(int key) const;
 
     void clear();

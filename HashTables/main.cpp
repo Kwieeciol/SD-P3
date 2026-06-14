@@ -7,7 +7,6 @@
 #include <vector>
 #include <cmath>
 
-// Nagłówki Twoich struktur danych
 #include "HashLinearProbing.h"
 #include "HashChaining.h"
 #include "HashAVLTree.h"
@@ -24,6 +23,7 @@ std::string getOpName(Operation op) {
     }
 }
 
+// Generator mt19937 z możliwością resetowania ziarna
 std::mt19937& getGenerator(unsigned int seed) {
     static std::mt19937 gen(seed);
     static unsigned int currentSeed = seed;
@@ -34,7 +34,7 @@ std::mt19937& getGenerator(unsigned int seed) {
     return gen;
 }
 
-// Funkcja generująca plik tekstowy z danymi testowymi (klucz wartość)
+// Funkcja do generowania pliku testowego z losowymi danymi
 void generateHashFile(unsigned int seed, int size, std::string fileName) {
     std::ofstream file(fileName);
     if (!file.is_open()) return;
@@ -59,12 +59,11 @@ long long measureHash(int size, Operation op, unsigned int seed, int repetitions
     std::uniform_int_distribution<int> dist(-size * 5, size * 5);
 
     for (int r = 0; r < repetitions; r++) {
-        // Inicjalizujemy tablicę z pojemnością równą docelowemu rozmiarowi badania
         T* ht = new T(size);
         std::vector<int> insertedKeys;
         insertedKeys.reserve(size);
 
-        // 1. Wstępne zapełnienie struktury do rozmiaru bazowego N
+        // Wstępne zapełnienie struktury 
         for (int j = 0; j < size; j++) {
             int k = dist(gen);
             int v = dist(gen);
@@ -82,7 +81,7 @@ long long measureHash(int size, Operation op, unsigned int seed, int repetitions
             keyToRemove = insertedKeys[indexDist(gen)];
         }
 
-        // 2. Pomiar czasu właściwej operacji
+        // Pomiar czasu właściwej operacji
         auto start = std::chrono::high_resolution_clock::now();
 
         if (op == INSERT) {
@@ -115,8 +114,8 @@ void runHashTests(const unsigned int seeds[10]) {
         for (int i = 1; i <= 8; i++) {
             int N = i * 5000;
             long long avgLinear = 0, avgChaining = 0, avgAVL = 0;
-
-            for (int s = 0; s < 10; s++) { // 10 niezależnych serii danych (seedów)
+            // 10 niezależnych serii danych (seedów)
+            for (int s = 0; s < 10; s++) { 
                 std::cout << "\rRozmiar: " << std::setw(6) << N
                     << " | Postep: [" << std::setw(2) << s + 1 << "/10] | Linear... " << std::flush;
                 avgLinear += measureHash<HashTableLinearProbing>(N, op, seeds[s], 10);
@@ -129,7 +128,6 @@ void runHashTests(const unsigned int seeds[10]) {
                 std::cout << "OK" << std::flush;
             }
 
-            // Zapis uśrednionych wyników ze wszystkich seedów do pliku CSV
             file << N << ";" << avgLinear / 10 << ";" << avgChaining / 10 << ";" << avgAVL / 10 << "\n";
         }
         file.close();
@@ -138,7 +136,7 @@ void runHashTests(const unsigned int seeds[10]) {
     std::cout << "Badania zakonczone sukcesem! Wyniki zapisano do plikow .csv\n";
 }
 
-// Menu operacji interaktywnych na konkretnej strukturze
+// Menu operacji
 template <typename T>
 void hashMenu(std::string name) {
     int initialCap = 16;
